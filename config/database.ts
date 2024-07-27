@@ -1,9 +1,8 @@
 import { FIREBASE_STORE } from './firebaseconfig'
-import { deleteDoc, doc, limit, setDoc } from "firebase/firestore";
-import { Cart, Department, Product } from './types';
+import { deleteDoc, doc, getDoc, limit, query, setDoc, updateDoc, collection, where, getDocs } from "firebase/firestore";
+import { Cart, CartProduct, Department, Product } from './types';
 import uuid from 'react-native-uuid';
 import * as data from '../constants/data'
-import { collection, query, where, getDocs } from "firebase/firestore";
 import { COLLECTIONS, CollectionTypes } from '@/constants/collections';
 
 const isDevelopment = false
@@ -50,12 +49,12 @@ export const insertDepartment = (department: Department | null) => {
     return setDoc(doc(FIREBASE_STORE, COLLECTIONS.DEPARTMENTS, department.id), department)
 
 }
-export const fetchDepartments = async () => {
+export const fetchDepartments = async (onlyActive = false) => {
     if (isDevelopment) {
         console.log("pulling from development")
         return data.DEPARTMENT_LIST;
     }
-    const q = query(collection(FIREBASE_STORE, COLLECTIONS.DEPARTMENTS));
+    const q = query(collection(FIREBASE_STORE, COLLECTIONS.DEPARTMENTS), onlyActive ? where('isActive', '==', true) : null);
     const querySnapshot = await getDocs(q);
     let departments: Department[] = []
     querySnapshot.forEach((doc: any) => {
@@ -69,15 +68,13 @@ export const fetchDepartments = async () => {
 }
 
 export const fetchCart = async (userId) => {
-    const q = query(collection(FIREBASE_STORE, COLLECTIONS.CART), where("userId", "==", userId), limit(1))
-    const querySnapshot = await getDocs(q);
-    let carts: Cart[] = []
-    querySnapshot.forEach((doc: any) => {
-        let cart = doc.data()
-        cart.id = doc.id
-        carts.push(cart)
-    })
-    return await carts[0]
+    const docRef = doc(FIREBASE_STORE, COLLECTIONS.CART, userId);
+    const docSnapShot = await getDoc(docRef);
+    if (docSnapShot.exists()) {
+        console.log("fetched data", docSnapShot.data())
+        return docSnapShot.data() as Cart
+    }
+    return null;
 }
 
 
@@ -92,4 +89,57 @@ export const insertItem = async (collection: COLLECTIONS, document: CollectionTy
     }
     document.createdDate = new Date();
     return await setDoc(doc(FIREBASE_STORE, collection, id), document)
+}
+export const addToCart = async (product: Product, userId): Promise<boolean> => {
+    const docRef = doc(FIREBASE_STORE, COLLECTIONS.CART, userId);
+    const docSnapShot = await getDoc(docRef);
+    if (docSnapShot.exists()) {
+        const cart: Cart = docSnapShot.data() as Cart;
+        cart.totalPrice = Number(cart.totalPrice) + Number(product.discountPrice);
+        const isProductExistsIndex = cart.products.findIndex(prod => prod.id == product.id)
+        console.log("product existing ", isProductExistsIndex)
+        if (isProductExistsIndex > -1) {
+            let existedProduct = cart.products[isProductExistsIndex]
+            existedProduct.quantity += 1;
+            cart.products[isProductExistsIndex] = existedProduct;
+        } else {
+            cart.products.push({ ...product, quantity: 1 })
+        }
+        return updateDoc(docRef, cart)
+            .then(() => true)
+            .catch(error => {
+                console.log(error);
+                return false;
+            })
+
+    } else {
+        const cart: Cart = { products: [{ ...product, quantity: 1 }], createdDate: new Date(), id: userId, userId: userId, totalPrice: product.discountPrice }
+        return setDoc(doc(FIREBASE_STORE, COLLECTIONS.CART, userId), cart)
+            .then(() => true)
+            .catch(error => {
+                console.log(error);
+                return false;
+            })
+    }
+}
+
+export const updateCartQunatiy = async (cartProduct: CartProduct, userID, quntity: number) => {
+    const docRef = doc(FIREBASE_STORE, COLLECTIONS.CART, userID);
+    const docSnapShot = await getDoc(docRef);
+    const cart = docSnapShot.data() as Cart
+    const index = cart.products.findIndex(prod => prod.id === cartProduct.id)
+    const productFetched = cart.products[index]
+    if (cartProduct.quantity + quntity <= 0) {
+        cart.products = cart.products.filter(prod => prod.id !== cartProduct.id);
+        cart.totalPrice = productFetched.discountPrice * productFetched.quantity
+    } else {
+        productFetched.quantity = Number(productFetched.quantity) + quntity;
+        cart.products[index] = productFetched;
+        if (quntity <= 0) {
+            cart.totalPrice = Number(cart.totalPrice) - Number(cartProduct.discountPrice);
+        } else {
+            cart.totalPrice = Number(cart.totalPrice) + Number(cartProduct.discountPrice);
+        }
+    }
+    updateDoc(doc(FIREBASE_STORE, COLLECTIONS.CART, userID), cart);
 }

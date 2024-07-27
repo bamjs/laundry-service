@@ -2,8 +2,8 @@ name: update
 on: push
 
 jobs:
-  update:
-    name: EAS Update
+  Build:
+    name: Environment Setup
     runs-on: ubuntu-latest
     steps:
       - name: Check for EXPO_TOKEN
@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: yarn
+          cache: npm
 
       - name: Setup EAS
         uses: expo/expo-github-action@v8
@@ -29,16 +29,14 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install dependencies
-        run: yarn install
-
-      - name: Publish update
-        run: eas update --auto
+        run: npm install
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-
+      - name: Publish update
+        run: eas update --auto
       - name: 👷 Build android app
         run: |
           eas build --local \

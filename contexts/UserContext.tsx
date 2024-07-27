@@ -28,9 +28,9 @@ function useSession() {
 }
 function useUserId() {
     const value = React.useContext(AuthContext)
-    return value.session["email"]
+    return isDevelopment ? value.session['user']["email"] : value.session["email"]
 }
-const isDevelopment = false
+const isDevelopment = true
 const SessionProvider = (props: React.PropsWithChildren) => {
     const [isLoggedIn, setIsLoggedIn] = useState(isDevelopment ? true : false);
     const [session, setSession] = useState<UserCredential>(isDevelopment ? ({ user: { email: "muthyala.js@gmail.com" } } as UserCredential) : null);
@@ -53,6 +53,7 @@ const SessionProvider = (props: React.PropsWithChildren) => {
             const user = JSON.parse(userString)
             console.log("Local storage user", user);
             if (user) {
+                setSession(user)
                 setIsLoggedIn(true);
                 router.replace("/(protected)/index")
             } else {

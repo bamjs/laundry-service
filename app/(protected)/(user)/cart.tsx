@@ -5,7 +5,6 @@ const Cart = () => {
     return (
         <>
             <View>
-
                 <UserCartWrapper />
             </View></>
     )

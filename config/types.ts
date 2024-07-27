@@ -9,10 +9,12 @@ type BaseUserCollection = {
     userId: string
     id: string
 }
-type Product = BaseAdminCollection & {
+type BaseProduct = {
     id: string;
     name: string;
     imageUrl: string;
+}
+type Product = BaseAdminCollection & BaseProduct & {
     originalPrice: number;
     discountPrice: number;
     offerPercentage: number;
@@ -36,15 +38,27 @@ enum STATUS {
     COMPLETED = "completed"
 
 }
+type CartProduct = BaseProduct & {
+    discountPrice: number;
+    quantity: number
+}
+type CartProductWithPrice = CartProduct & {
+    price: number
+}
 type Order = BaseUserCollection & {
     status: STATUS,
-    products: Product[],
+    products: CartProduct[],
     totalPrice: number,
     shippingPrice: number,
     servicePrice: number,
     comments: string
 }
 type Cart = BaseUserCollection & {
-    products: Product[]
+    products: CartProduct[],
+    totalPrice: number,
 }
-export { Product, Department, Order, Cart }
+type CartWithPrice = BaseUserCollection & {
+    products: CartProductWithPrice[],
+    totalPrice: number,
+}
+export { Product, Department, Order, Cart, CartProduct, CartWithPrice }

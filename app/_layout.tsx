@@ -13,7 +13,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const session = useSession()
+  const { isLoggedIn, isloading } = useSession()
   const [isLoading, setIsLoading] = useState(false)
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -47,13 +47,13 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SessionProvider >
         <Spinner
-          visible={isLoading}
+          visible={isLoading || isLoggedIn}
           textContent={'Loading...'}
           animation='fade'
           textStyle={{ color: '#FFF' }}
         />
         < GestureHandlerRootView style={{ flex: 1 }}>
-          <MyStack isLoggedIn={session.isLoggedIn} />
+          <MyStack />
         </GestureHandlerRootView >
       </SessionProvider>
       <StatusBar backgroundColor={Colors.light.tint} />
@@ -69,7 +69,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 type MyStackProps = {
-  isLoggedIn: boolean
+  isLoggedIn?: boolean
 }
 function MyStack(props: MyStackProps) {
   const { isLoggedIn } = useSession()
