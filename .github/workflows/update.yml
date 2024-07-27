@@ -43,6 +43,7 @@ jobs:
           --non-interactive \
           --output=./app-build \
           --platform=android
+          --profile=preview
 
       - name: 👷 Build ios app
         run: |
@@ -50,3 +51,10 @@ jobs:
           --non-interactive \
           --output=./app-build \
           --platform=ios
+          --profile=preview
+      - name: upload Apks artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: apks
+          path: |
+            ./app-build
