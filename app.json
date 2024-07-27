@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "laundry-service",
+    "name": "RS Enterprises",
     "slug": "laundry-service",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.muthyala.js.laundryservice"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "85ad2955-4bff-4de8-8e41-374de55a1672"
+      }
     }
   }
 }
