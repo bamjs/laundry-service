@@ -11,13 +11,15 @@ const AuthContext = createContext<{
     setIsLoggedIn: (login: boolean) => void
     isloading: boolean
     setIsLoading: (value: boolean) => void
+    checkLocalStorage: () => void
 }>({
     isLoggedIn: false,
     session: null,
     setIsLoggedIn: (login: boolean) => { },
     setSession: ({ }) => { },
     isloading: false,
-    setIsLoading: (value: boolean) => { }
+    setIsLoading: (value: boolean) => { },
+    checkLocalStorage: () => { }
 });
 
 
@@ -30,7 +32,7 @@ function useUserId() {
     const value = React.useContext(AuthContext)
     return isDevelopment ? value.session['user']["email"] : value.session["email"]
 }
-const isDevelopment = true
+const isDevelopment = false
 const SessionProvider = (props: React.PropsWithChildren) => {
     const [isLoggedIn, setIsLoggedIn] = useState(isDevelopment ? true : false);
     const [session, setSession] = useState<UserCredential>(isDevelopment ? ({ user: { email: "muthyala.js@gmail.com" } } as UserCredential) : null);
@@ -46,32 +48,35 @@ const SessionProvider = (props: React.PropsWithChildren) => {
             );
         }
     }
-    useEffect(() => {
-        const checkAsyncStorage = async () => {
-            if (__DEV__) return
-            const userString = await AsyncStorage.getItem("user")
-            const user = JSON.parse(userString)
-            console.log("Local storage user", user);
-            if (user) {
-                setSession(user)
-                setIsLoggedIn(true);
-                router.replace("/(protected)/index")
-            } else {
-                setIsLoggedIn(false)
-                router.replace("/login")
-            }
+    const checkLocalStorage = async () => {
+        const userString = await AsyncStorage.getItem("user");
+        const user = JSON.parse(userString);
+        console.log("Local storage user", user);
+        if (user) {
+            setSession(user);
+            setIsLoggedIn(true);
+            router.replace("/(protected)/index");
+            return true
+        } else {
+            setIsLoggedIn(false);
+            router.replace("/login");
+            return false;
         }
-        checkAsyncStorage().then(() => {
+    };
+    useEffect(() => {
+        setIsloading(true)
+        checkLocalStorage().then(() => {
             console.log('====================================');
             console.log("fetched storage");
             console.log('====================================')
+            setIsloading(false)
         }).catch(error => console.error(error))
     }, [])
     useEffect(() => { handleLogIn() }, [isLoggedIn])
 
     return (
         <>
-            <AuthContext.Provider value={{ session: session, isLoggedIn: isLoggedIn, setIsLoggedIn: setIsLoggedIn, setSession: setSession, isloading: isLoading, setIsLoading: setIsloading }}>
+            <AuthContext.Provider value={{ session: session, isLoggedIn: isLoggedIn, checkLocalStorage: checkLocalStorage, setIsLoggedIn: setIsLoggedIn, setSession: setSession, isloading: isLoading, setIsLoading: setIsloading }}>
                 {props.children}
             </AuthContext.Provider>
         </>

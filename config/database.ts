@@ -32,7 +32,7 @@ export const fetchProducts = async (department?: Department) => {
     let products: Product[] = []
     querySnapshot.forEach((doc: any) => {
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, doc.data())
+        // console.log(doc.id, doc.data())
         let product = doc.data()
         product.id = doc.id;
         products.push(product)
@@ -45,7 +45,7 @@ export const insertDepartment = (department: Department | null) => {
         department.id = uuid.v4().toString();
     }
     // delete department.id
-    console.log(department)
+    // console.log(department)
     return setDoc(doc(FIREBASE_STORE, COLLECTIONS.DEPARTMENTS, department.id), department)
 
 }
@@ -59,7 +59,7 @@ export const fetchDepartments = async (onlyActive = false) => {
     let departments: Department[] = []
     querySnapshot.forEach((doc: any) => {
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, doc.data())
+        // console.log(doc.id, doc.data())
         let department = doc.data()
         department.id = doc.id;
         departments.push(department)
@@ -71,7 +71,7 @@ export const fetchCart = async (userId) => {
     const docRef = doc(FIREBASE_STORE, COLLECTIONS.CART, userId);
     const docSnapShot = await getDoc(docRef);
     if (docSnapShot.exists()) {
-        console.log("fetched data", docSnapShot.data())
+        // console.log("fetched data", docSnapShot.data())
         return docSnapShot.data() as Cart
     }
     return null;
@@ -97,7 +97,7 @@ export const addToCart = async (product: Product, userId): Promise<boolean> => {
         const cart: Cart = docSnapShot.data() as Cart;
         cart.totalPrice = Number(cart.totalPrice) + Number(product.discountPrice);
         const isProductExistsIndex = cart.products.findIndex(prod => prod.id == product.id)
-        console.log("product existing ", isProductExistsIndex)
+        // console.log("product existing ", isProductExistsIndex)
         if (isProductExistsIndex > -1) {
             let existedProduct = cart.products[isProductExistsIndex]
             existedProduct.quantity += 1;

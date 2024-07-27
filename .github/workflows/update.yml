@@ -5,6 +5,7 @@ jobs:
   Build:
     name: Environment Setup
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Check for EXPO_TOKEN
         run: |

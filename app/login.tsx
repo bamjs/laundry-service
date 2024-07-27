@@ -15,11 +15,19 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ onLoginSuccess }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const navigation = useNavigation();
     const router = useRouter();
-    const { session, isLoggedIn, setSession, setIsLoggedIn } = useContext(AuthContext);
+    const { session, isLoggedIn, setSession, setIsLoggedIn, isloading } = useContext(AuthContext);
 
     useEffect(() => {
         navigation.setOptions({ headerShown: false });
+        // checkLocalStorage()
+        // setLoading(true);
+
     }, []);
+    useEffect(() => {
+        if (isloading) {
+            return
+        }
+    }, [isloading])
     const handleLogin = async () => {
         try {
             const userCredentail = await loginUserWithUsernameAndPassword(email, password);
@@ -45,32 +53,36 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ onLoginSuccess }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>
-                RS Enterprises Login
-            </Text>
-            {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-            />
+            {(!isloading) &&
+                <View>
+                    <Text style={styles.title}>
+                        RS Enterprises Login
+                    </Text>
+                    {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry
+                    />
 
-            <View style={styles.button}>
-                <Button title="Login" onPress={handleLogin} />
-            </View>
-            <View style={styles.createAccountText}>
-                <Text onPress={() => router.navigate("signup")} >New User! Create Account</Text>
-            </View>
+                    <View style={styles.button}>
+                        <Button title="Login" onPress={handleLogin} />
+                    </View>
+                    <View style={styles.createAccountText}>
+                        <Text onPress={() => router.navigate("signup")} >New User! Create Account</Text>
+                    </View>
+                </View>
+            }
         </View>
     );
 };

@@ -10,18 +10,24 @@ import uuid from 'react-native-uuid';
 import * as Yup from 'yup'
 import DeleteDailog from "../shared/deleteModal";
 import { COLLECTIONS } from "@/constants/collections";
+import { useUserId } from "@/contexts/UserContext";
 type DepartmentCreateOrEditProps = {
     department?: Department
     onSubmit?: () => void
 }
 const DepartmentCreateOrEdit: React.FC<DepartmentCreateOrEditProps> = (props: DepartmentCreateOrEditProps) => {
+    const { user } = useUserId()
     let initialValues: Department = props.department ?
         props.department :
         {
             id: uuid.v4().toString(),
             url: "",
             isActive: true,
-            name: ""
+            name: "",
+            createdBy: user,
+            createdDate: new Date(),
+            updatedBy: user,
+            updatedDate: new Date(),
         }
     const handleSubmit = (values) => {
         console.log("submitting data", values)

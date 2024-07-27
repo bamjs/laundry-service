@@ -60,7 +60,6 @@ const App = () => {
     }
     return (<>
         <SafeAreaView>
-
             <FlatList
                 style={styles.departmentContainer}
                 data={departments}
@@ -75,20 +74,19 @@ const App = () => {
                 horizontal={true}
             />
 
-            {products.length > 0 &&
-                <FlatList
-                    data={products}
-                    scrollEnabled={false}
-                    showsVerticalScrollIndicator={false}
-                    refreshing={isloading}
-                    onRefresh={() => loadData()}
-                    renderItem={({ item, index }) => {
-                        return <>
-                            <ProductCardWrapper product={item} key={item.id} onAddToCart={handleCart} />
-                        </>
-                    }}
-                />
-            }
+
+            <FlatList
+                data={products}
+                scrollEnabled={false}
+                showsVerticalScrollIndicator={false}
+                refreshing={isloading}
+                onRefresh={() => loadData()}
+                renderItem={({ item, index }) => {
+                    return <>
+                        <ProductCardWrapper product={item} key={item.id} onAddToCart={handleCart} />
+                    </>
+                }}
+            />
         </SafeAreaView >
     </>
     )
