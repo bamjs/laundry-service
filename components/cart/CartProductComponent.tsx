@@ -31,7 +31,7 @@ const CartProductComponent = (props: CartProductComponentProps) => {
             <View style={styles.infoContainer}>
                 <Text style={styles.name}>{product.name}</Text>
                 <Text style={styles.quantity}>Quantity </Text>
-                <View style={{ display: 'flex', alignContent: 'space-between', width: 180, flex: 1, flexDirection: 'row' }}>
+                <View style={{ display: 'flex', alignContent: 'space-between', width: 180, flexDirection: 'row' }}>
                     <TouchableOpacity style={{ width: 20 }} onPress={() => decreaseQunaity()}>
                         <AntDesign name="minus" size={24} color="black" />
                     </TouchableOpacity>
@@ -46,32 +46,18 @@ const CartProductComponent = (props: CartProductComponentProps) => {
     )
 }
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-        backgroundColor: '#fff',
-        borderColor: '#29bdc1',
-        borderRadius: 10,
-        borderWidth: 2,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-    },
-    productImage: {
-        height: 30,
-        width: 30,
-        borderRadius: 50
-    },
     itemContainer: {
         flexDirection: 'row',
         marginBottom: 16,
+        borderRadius: 10,
+        borderColor: '#ff9',
+        borderWidth: 0.3
     },
     image: {
         width: 100,
         height: 100,
         marginRight: 16,
+        borderRadius: 10
     },
     infoContainer: {
         justifyContent: 'space-around',

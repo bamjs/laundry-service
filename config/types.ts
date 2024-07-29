@@ -49,9 +49,9 @@ type Order = BaseUserCollection & {
     status: STATUS,
     products: CartProduct[],
     totalPrice: number,
-    shippingPrice: number,
-    servicePrice: number,
-    comments: string
+    shippingPrice?: number,
+    servicePrice?: number,
+    comments?: string
 }
 type Cart = BaseUserCollection & {
     products: CartProduct[],
@@ -61,4 +61,4 @@ type CartWithPrice = BaseUserCollection & {
     products: CartProductWithPrice[],
     totalPrice: number,
 }
-export { Product, Department, Order, Cart, CartProduct, CartWithPrice }
+export { Product, Department, Order, Cart, CartProduct, CartWithPrice, STATUS as ORDERSTATUS }

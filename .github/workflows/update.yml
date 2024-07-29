@@ -5,7 +5,6 @@ jobs:
   Build:
     name: Environment Setup
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - name: Check for EXPO_TOKEN
         run: |
@@ -29,39 +28,36 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Install dependencies
-        run: npm install
-
       - uses: actions/setup-java@v4
         with:
           distribution: "corretto"
           java-version: "17"
           cache: "gradle"
+      - name: Install dependencies
+        run: npm install
 
-      - name: 🏗 Setup EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
       - name: Publish update
         run: eas update --auto
       - name: 👷 Build android app
+        continue-on-error: true
         run: |
           eas build --local \
           --non-interactive \
           --output=./app-build \
-          --platform=android
+          --platform=android \
           --profile=preview
 
       - name: 👷 Build ios app
+        continue-on-error: true
         run: |
           eas build --local \
           --non-interactive \
           --output=./app-build \
-          --platform=ios
+          --platform=ios \
           --profile=preview
       - name: upload Apks artifacts
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: apks
           path: |

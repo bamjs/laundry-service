@@ -1,6 +1,6 @@
 import { FIREBASE_STORE } from './firebaseconfig'
-import { deleteDoc, doc, getDoc, limit, query, setDoc, updateDoc, collection, where, getDocs } from "firebase/firestore";
-import { Cart, CartProduct, Department, Product } from './types';
+import { deleteDoc, doc, getDoc, limit, query, setDoc, updateDoc, collection, where, getDocs, getAggregateFromServer, count, sum, average } from "firebase/firestore";
+import { Cart, CartProduct, Department, Order, ORDERSTATUS, Product } from './types';
 import uuid from 'react-native-uuid';
 import * as data from '../constants/data'
 import { COLLECTIONS, CollectionTypes } from '@/constants/collections';
@@ -142,4 +142,33 @@ export const updateCartQunatiy = async (cartProduct: CartProduct, userID, quntit
         }
     }
     updateDoc(doc(FIREBASE_STORE, COLLECTIONS.CART, userID), cart);
+}
+
+export const processOrder = async (userId: string) => {
+    const cart = await fetchCart(userId);
+    const id = uuid.v4().toString()
+    const order: Order = {
+        products: cart.products,
+        id: id,
+        userId: userId,
+        status: ORDERSTATUS.ORDERED,
+        shippingPrice: 30,
+        createdDate: new Date(),
+        totalPrice: cart.totalPrice
+    }
+    const docRef = doc(FIREBASE_STORE, COLLECTIONS.ORDERS, id)
+    return setDoc(docRef, order)
+}
+export const clearCart = async (userId: string) => {
+    return deleteItem(COLLECTIONS.CART, userId);
+}
+
+export const getDashboardAnalytics = async () => {
+    const coll = collection(FIREBASE_STORE, COLLECTIONS.ORDERS);
+    const snapShot = await getAggregateFromServer(coll, {
+        totalOrders: count(),
+        totalSales: sum('totalPrice'),
+        averagePrice: average('totalPrice')
+    })
+    return snapShot.data()
 }

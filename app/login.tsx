@@ -42,7 +42,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ onLoginSuccess }) => {
             }
         } catch (error: any) {
             // setErrorMessage(error.message);
-            if ((error.message as string).includes("auth/invalid-credential")) {
+            if ((error.message as string).includes("invalid")) {
                 showMessage({ message: "Invalid Credentials", type: 'danger' })
             } else {
                 showMessage({ message: error.message, type: 'danger' })

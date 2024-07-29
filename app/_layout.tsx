@@ -28,7 +28,7 @@ export default function RootLayout() {
     XHRInterceptor.setOpenCallback(() => {
       setTimeout(() => {
         setIsLoading(false)
-      }, 5000);
+      }, 1000);
       setIsLoading(true)
     })
     XHRInterceptor.setResponseCallback(

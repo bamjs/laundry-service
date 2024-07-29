@@ -1,4 +1,4 @@
-import UserCartWrapper from "@/components/products/cart/UserCartWrapper"
+import UserCartWrapper from "@/components/cart/UserCartWrapper"
 import { View, Text } from "react-native"
 
 const Cart = () => {

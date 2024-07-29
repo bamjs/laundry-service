@@ -8,11 +8,11 @@ import { useEffect, useState } from "react";
 import { Button, StyleSheet, View, Dimensions } from "react-native";
 import { ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler";
 export default function Departments(params: any) {
-    const depat: Department = { id: "", name: "", isActive: false, url: "" }
+    // const depat: Department = { id: "", name: "", isActive: false, url: "" }
     let intialDepartments: Department[] = []
     const [showModal, setShowModal] = useState(false)
-    const [selectedDepartment, setSelectedDepartment] = useState(depat);
-    const [departments, setDepartments] = useState(intialDepartments)
+    const [selectedDepartment, setSelectedDepartment] = useState<Department>(null);
+    const [departments, setDepartments] = useState<Department[]>([])
 
 
 
@@ -24,12 +24,12 @@ export default function Departments(params: any) {
     }
     const onModalClose = () => {
         setShowModal(false)
-        setSelectedDepartment(depat)
+        setSelectedDepartment(null)
         console.log("closed modal")
     }
     useEffect(() => {
         fetchDepartments().then(data => {
-            setDepartments(data)
+            setDepartments(data as Department[])
         })
     }, [])
 

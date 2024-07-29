@@ -1,16 +1,22 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { getDashboardAnalytics } from '@/config/database';
 
 const BootomSheet = () => {
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
+    const [analaytics, setAnalatics] = useState<{ totalOrders: number, averagePrice: number, totalSales: number }>();
     const snapPoints = ["10%", "30%", "50%", "90%", "95%"]
     // callbacks
     const handleSheetChanges = useCallback((index: number) => {
         console.log('handleSheetChanges', index);
     }, []);
-
+    useEffect(() => {
+        getDashboardAnalytics().then((data) => {
+            setAnalatics(data)
+        })
+    }, [])
     // renders
     return (
         <View style={styles.container}>
@@ -21,8 +27,16 @@ const BootomSheet = () => {
                 index={2}
             >
                 <BottomSheetView style={styles.contentContainer}>
-                    <Text>Awesome 🎉
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. In reiciendis corrupti ex dolores quibusdam mollitia sed explicabo? Qui, ad iusto. Commodi eaque dignissimos quas! Nam nemo totam aut rerum eveniet?
+                    <Text style={styles.analysisText}>
+                        Total Orders : {analaytics.totalOrders}
+
+                    </Text>
+                    <Text style={styles.analysisText}>
+                        Sales YTD : {analaytics.totalSales}
+                    </Text>
+                    <Text style={styles.analysisText}>
+
+                        Average Sale Price : {analaytics.averagePrice}
                     </Text>
                 </BottomSheetView>
             </BottomSheet>
@@ -40,6 +54,10 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
     },
+    analysisText: {
+        fontSize: 20,
+        fontWeight: '500'
+    }
 });
 
 export default BootomSheet;
