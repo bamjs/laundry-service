@@ -6,17 +6,17 @@ import { getDashboardAnalytics } from '@/config/database';
 const BootomSheet = () => {
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
-    const [analaytics, setAnalatics] = useState<{ totalOrders: number, averagePrice: number, totalSales: number }>();
+    // const [analaytics, setAnalatics] = useState<{ totalOrders: number, averagePrice: number, totalSales: number }>({ averagePrice: 0, totalOrders: 0, totalSales: 0 });
     const snapPoints = ["10%", "30%", "50%", "90%", "95%"]
-    // callbacks
+    // // callbacks
     const handleSheetChanges = useCallback((index: number) => {
         console.log('handleSheetChanges', index);
     }, []);
-    useEffect(() => {
-        getDashboardAnalytics().then((data) => {
-            setAnalatics(data)
-        })
-    }, [])
+    // useEffect(() => {
+    //     getDashboardAnalytics().then((data) => {
+    //         setAnalatics(data)
+    //     })
+    // }, [])
     // renders
     return (
         <View style={styles.container}>
@@ -27,7 +27,10 @@ const BootomSheet = () => {
                 index={2}
             >
                 <BottomSheetView style={styles.contentContainer}>
-                    <Text style={styles.analysisText}>
+                    <Text>
+                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Inventore eveniet doloribus aliquam nihil dolorum officiis aperiam, vitae magni magnam impedit, in cupiditate, aut voluptate quo illum. Nisi cum quae explicabo.
+                    </Text>
+                    {/* <Text style={styles.analysisText}>
                         Total Orders : {analaytics.totalOrders}
 
                     </Text>
@@ -37,7 +40,7 @@ const BootomSheet = () => {
                     <Text style={styles.analysisText}>
 
                         Average Sale Price : {analaytics.averagePrice}
-                    </Text>
+                    </Text> */}
                 </BottomSheetView>
             </BottomSheet>
         </View>
